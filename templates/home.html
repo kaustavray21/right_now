@@ -1,19 +1,14 @@
 {% extends 'base.html' %} {% block content %}
-<div class="text-center">
-  <h1 class="text-4xl font-bold text-gray-800 mb-4">
-    Welcome to the Home Page!
-  </h1>
-  <p class="text-gray-600 text-lg mb-6">
-    This is the public home page. Anyone can see this page.
-  </p>
-  <p class="text-gray-600">
-    Please
-    <a href="{% url 'login' %}" class="text-green-500 hover:underline">login</a>
-    or
-    <a href="{% url 'signup' %}" class="text-green-500 hover:underline"
-      >sign up</a
-    >
-    to access the dashboard.
-  </p>
+<div class="text-center p-5 bg-white rounded-3 shadow-sm">
+  <h1 class="display-4 fw-bold">Welcome to AuthApp!</h1>
+  <p class="lead">This is the public home page. Anyone can see this page.</p>
+  <hr class="my-4" />
+  <p>Please log in or sign up to access your dashboard.</p>
+  <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button"
+    >Login</a
+  >
+  <a class="btn btn-success btn-lg" href="{% url 'signup' %}" role="button"
+    >Sign Up</a
+  >
 </div>
 {% endblock %}
