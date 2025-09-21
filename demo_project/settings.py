@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'your-new-super-secret-key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Add your server's public IP and domain name here
 ALLOWED_HOSTS = ['51.20.185.233', '127.0.0.1', 'localhost']
