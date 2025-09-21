@@ -24,17 +24,12 @@
         justify-content: center;
       }
       .form-wrapper {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
         width: 100%;
         max-width: 1000px;
         background: #fff;
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         overflow: hidden;
-      }
-      .form-panel {
-        padding: 40px;
       }
       .form-panel.branding {
         background: linear-gradient(45deg, #00c6fb, #005bea);
@@ -44,13 +39,14 @@
         align-items: center;
         justify-content: center;
         text-align: center;
+        padding: 40px;
       }
       .form-control {
         border-radius: 8px;
         padding: 12px;
       }
       .btn-primary {
-        background-color: #007bff;
+        background-color: #7068e6;
         border: none;
         padding: 12px;
         border-radius: 8px;
@@ -58,9 +54,9 @@
     </style>
   </head>
   <body>
-    <div class="form-container">
-      <div class="form-wrapper">
-        <div class="form-panel">
+    <div class="form-container p-3">
+      <div class="row g-0 form-wrapper">
+        <div class="col-lg-6 form-panel p-4 p-md-5">
           <h3 class="mb-4">Create Account</h3>
           <form method="post">
             {% csrf_token %} {% for field in form %}
@@ -85,9 +81,11 @@
             </p>
           </form>
         </div>
-        <div class="form-panel branding">
-          <h2>Join Us!</h2>
-          <p>Create an account to get started with our awesome features.</p>
+        <div class="col-lg-6 d-none d-lg-flex form-panel branding">
+          <div>
+            <h2>Join Us!</h2>
+            <p>Create an account to get started with our awesome features.</p>
+          </div>
         </div>
       </div>
     </div>

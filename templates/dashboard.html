@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% load tz %} {% block content %}
 <style>
   .card {
     border: none;
@@ -10,24 +10,31 @@
     border-bottom: none;
     font-weight: 600;
   }
+  .date-picker-form input {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    padding: 0.375rem 0.75rem;
+  }
 </style>
 <div class="container-fluid">
   <h1 class="h2 mb-4">Dashboard</h1>
   <p class="mb-4">Welcome, <span class="fw-bold">{{ user.username }}</span>!</p>
 
   <div class="row">
-    <div class="col-md-6 mb-4">
+    <div class="col-lg-4 mb-4">
       <div class="card h-100">
         <div class="card-body">
           <h5 class="card-title">User Information</h5>
-          {% if user.first_name %}
-          <p><strong> Name: </strong> {{ user.first_name }}</p>
+          {% if user.first_name and user.last_name %}
+          <p>
+            <strong> Name: </strong> {{ user.first_name }} {{ user.last_name }}
+          </p>
           {% endif %}
           <p><strong>Email:</strong> {{ user.email }}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-6 mb-4">
+    <div class="col-lg-4 mb-4">
       <div class="card h-100">
         <div class="card-body text-center">
           <h5 class="card-title">Total Logins</h5>
@@ -35,26 +42,110 @@
         </div>
       </div>
     </div>
+    <div class="col-lg-4 mb-4">
+      <div class="card h-100">
+        <div
+          class="card-body d-flex flex-column justify-content-center align-items-center text-center"
+        >
+          <h5 class="card-title w-100">Login Distribution</h5>
+          <div style="position: relative; width: 90%; max-width: 250px">
+            <canvas id="loginPieChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <h5 class="card-title mb-0">Login History</h5>
+    <div
+      class="card-header d-flex justify-content-between align-items-center flex-wrap"
+    >
+      <h5 class="card-title mb-0 me-3">Login History</h5>
+      <form id="datePickerForm" method="get" class="date-picker-form">
+        <label for="date-picker" class="form-label mb-0 me-2"
+          >Select Date:</label
+        >
+        <input
+          type="date"
+          id="date-picker"
+          name="date"
+          value="{{ selected_date_str }}"
+        />
+      </form>
     </div>
     <div class="card-body">
+      {% with formatted_date=selected_date_formatted %}
+      <p class="text-muted">
+        Displaying {{ total_logins_today }} login(s) for {{ formatted_date }}.
+      </p>
+      {% endwith %}
       <ul class="list-group list-group-flush">
-        {% for login in login_history|slice:":5" %}
+        {% for login in login_history %}
         <li
           class="list-group-item d-flex justify-content-between align-items-center"
         >
-          Logged in on
-          <span>{{ login.login_timestamp|date:"F j, Y, P" }}</span>
+          Logged in at {% timezone "Asia/Kolkata" %}
+          <span>{{ login.login_timestamp|date:"P" }}</span>
+          {% endtimezone %}
         </li>
         {% empty %}
-        <li class="list-group-item">No login history found.</li>
+        <li class="list-group-item">No login history found for this day.</li>
         {% endfor %}
       </ul>
     </div>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const ctx = document.getElementById('loginPieChart').getContext('2d');
+
+    const chartLabels = {{ chart_labels|safe }};
+    const chartData = {{ chart_data|safe }};
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: chartLabels,
+        datasets: [{
+          label: 'Logins',
+          data: chartData,
+          backgroundColor: [
+            '#7068e6',
+            '#a168e6',
+            '#d66bff',
+            '#e9ecef'
+          ],
+          hoverOffset: 20,
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        cutout: '60%',
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const total = context.chart.getDatasetMeta(0).total;
+                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) + '%' : '0%';
+                return `${label}: ${value} (${percentage})`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const datePicker = document.getElementById('date-picker');
+    if(datePicker) {
+      datePicker.addEventListener('change', function() {
+        document.getElementById('datePickerForm').submit();
+      });
+    }
+  });
+</script>
+
 {% endblock %}
