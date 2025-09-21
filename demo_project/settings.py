@@ -1,13 +1,22 @@
+
 """
 Django settings for demo_project project.
 """
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-your-secret-key-here' 
-DEBUG = True
+# IMPORTANT: Replace this with a new, secure key for production.
+# You can generate one with: python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
+SECRET_KEY = 'your-new-super-secret-key'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
+# Add your server's public IP and domain name here
 ALLOWED_HOSTS = ['51.20.185.233', '127.0.0.1', 'localhost']
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -70,7 +79,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# This tells Django where to collect all static files for production
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
+
